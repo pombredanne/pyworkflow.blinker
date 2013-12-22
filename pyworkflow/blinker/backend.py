@@ -33,6 +33,9 @@ class BlinkerBackend(Backend):
     def register_activity(self, *args, **kwargs):
         return self.parent.register_activity(*args, **kwargs)
 
+    def process_by_id(self, *args, **kwargs):
+        return self.parent.process_by_id(*args, **kwargs)
+
     def processes(self, *args, **kwargs):
         return self.parent.processes(*args, **kwargs)
 
@@ -45,7 +48,7 @@ class BlinkerBackend(Backend):
             # check if any activities have timed out
             for event in task.process.unseen_events():
                 if hasattr(event, 'result') and isinstance(event.result, ActivityTimedOut):
-                    BlinkerBackend.on_activity_timedout.send(self, event.activity, **event.result.__dict__)
+                    BlinkerBackend.on_activity_timedout.send(self, activity_execution=event.activity_execution, details=event.result.details)
         return task
     
     def heartbeat_activity_task(self, *args, **kwargs):
