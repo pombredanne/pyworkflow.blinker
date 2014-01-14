@@ -80,7 +80,8 @@ class BlinkerBackend(Backend):
             CancelActivity: BlinkerBackend.on_activity_canceled,
             CompleteProcess: BlinkerBackend.on_process_completed,
             CancelProcess: BlinkerBackend.on_process_canceled,
-            StartChildProcess: BlinkerBackend.on_process_started
+            StartChildProcess: BlinkerBackend.on_process_started,
+            Timer: None
         }
 
         return mapping[decision.__class__]
@@ -101,6 +102,8 @@ class BlinkerBackend(Backend):
         
         for decision in decisions if type(decisions) == list else [decisions]:
             signal = self.decision_signal(decision)
+            if not signal:
+                continue
 
             args = {
                 'schedule_activity': lambda: {'process': task.process, 'activity_execution': ActivityExecution(decision.activity, decision.id, decision.input)},
