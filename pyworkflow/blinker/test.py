@@ -60,6 +60,6 @@ class BlinkerBackendTestCase(WorkflowBackendTestCase):
             ('on_process_completed', ['process', 'result'])
         ]
 
-        for (i,ev) in enumerate(received):
+        for (i,ev) in enumerate(received[:22]):
             assert ev == expected[i], 'Expected %s instead of %s' % (expected[i], ev)
 
