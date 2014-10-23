@@ -68,10 +68,10 @@ class BlinkerBackend(Backend):
         BlinkerBackend.on_process_signaled.send(self, process=process, signal=signal, data=data)
         return ret        
 
-    def cancel_process(self, process, details=None, reason=None):
-        ret = self.parent.cancel_process(process, details=details, reason=reason)
+    def cancel_process(self, process, details=None):
+        ret = self.parent.cancel_process(process, details=details)
         
-        BlinkerBackend.on_process_canceled.send(self, process=process, details=details, reason=reason)
+        BlinkerBackend.on_process_canceled.send(self, process=process, details=details)
         return ret
 
     def decision_signal(self, decision):
@@ -108,7 +108,7 @@ class BlinkerBackend(Backend):
             args = {
                 'schedule_activity': lambda: {'process': task.process, 'activity_execution': ActivityExecution(decision.activity, decision.id, decision.input)},
                 'complete_process': lambda: {'process': task.process, 'result': decision.result},
-                'cancel_process': lambda: {'process': task.process, 'details': decision.details, 'reason': decision.reason},
+                'cancel_process': lambda: {'process': task.process, 'details': decision.details},
                 'cancel_activity': lambda: {'process': task.process, 'activity_id': decision.id},
                 'start_child_process': lambda: {'process': decision.process}
             }

@@ -38,7 +38,7 @@ class BlinkerBackendTestCase(WorkflowBackendTestCase):
         expected = [
             ('on_process_started', ['process']), 
             ('on_process_started', ['process']), 
-            ('on_process_canceled', ['process', 'reason', 'details']), 
+            ('on_process_canceled', ['process', 'details']), 
             ('on_complete_decision_task', ['task', 'decisions']), 
             ('on_activity_scheduled', ['process', 'activity_execution']),
             ('on_process_signaled', ['process', 'signal', 'data']), 
