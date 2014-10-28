@@ -20,7 +20,7 @@ class BlinkerBackend(Backend):
     on_process_completed = Signal()
     on_process_canceled = Signal()
     on_process_signaled = Signal()
-
+    
 
     def __init__(self, parent):
         self.parent = parent
@@ -45,8 +45,11 @@ class BlinkerBackend(Backend):
     def poll_decision_task(self, *args, **kwargs):
         task = self.parent.poll_decision_task(*args, **kwargs)
         if task:
-            # check if any activities have timed out
             for event in task.process.unseen_events():
+                # check if this is a child process id (first time we can get id)
+                if event.type == 'process_started' and task.process.parent:
+                    BlinkerBackend.on_process_started.send(self, process=task.process, process_id=task.process.id, parent_process_id=task.process.parent)
+                # check if any activities have timed out
                 if hasattr(event, 'result') and isinstance(event.result, ActivityTimedOut):
                     BlinkerBackend.on_activity_timedout.send(self, activity_execution=event.activity_execution, details=event.result.details)
         return task
@@ -79,7 +82,7 @@ class BlinkerBackend(Backend):
             CancelActivity: BlinkerBackend.on_activity_canceled,
             CompleteProcess: BlinkerBackend.on_process_completed,
             CancelProcess: BlinkerBackend.on_process_canceled,
-            StartChildProcess: BlinkerBackend.on_process_started,
+            StartChildProcess: None, # don't have the id yet
             Timer: None
         }
 
@@ -109,7 +112,6 @@ class BlinkerBackend(Backend):
                 'complete_process': lambda: {'process': task.process, 'process_id': task.process.id, 'result': decision.result},
                 'cancel_process': lambda: {'process': task.process, 'process_id': task.process.id, 'details': decision.details},
                 'cancel_activity': lambda: {'process': task.process, 'activity_id': decision.id},
-                'start_child_process': lambda: {'process': decision.process, 'process_id': decision.process.id}
             }
 
             signal.send(self, **args[decision.type]())

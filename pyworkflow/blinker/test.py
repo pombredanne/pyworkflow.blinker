@@ -53,7 +53,7 @@ class BlinkerBackendTestCase(WorkflowBackendTestCase):
             ('on_complete_activity_task', ['task', 'result']), 
             ('on_activity_completed', ['process_id', 'result', 'activity_execution']), 
             ('on_complete_decision_task', ['task', 'decisions']),
-            ('on_process_started', ['process', 'process_id']),
+            ('on_process_started', ['process', 'process_id', 'parent_process_id']),
             ('on_complete_decision_task', ['task', 'decisions']),
             ('on_process_completed', ['process', 'process_id', 'result']),
             ('on_complete_decision_task', ['task', 'decisions']),
