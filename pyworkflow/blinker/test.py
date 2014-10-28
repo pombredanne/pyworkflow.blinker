@@ -36,12 +36,12 @@ class BlinkerBackendTestCase(WorkflowBackendTestCase):
         self.subtest_basic()
 
         expected = [
-            ('on_process_started', ['process']), 
-            ('on_process_started', ['process']), 
-            ('on_process_canceled', ['process', 'details']), 
+            ('on_process_started', ['process', 'process_id']), 
+            ('on_process_started', ['process', 'process_id']), 
+            ('on_process_canceled', ['process_id', 'details']), 
             ('on_complete_decision_task', ['task', 'decisions']), 
             ('on_activity_scheduled', ['process', 'activity_execution']),
-            ('on_process_signaled', ['process', 'signal', 'data']), 
+            ('on_process_signaled', ['signal', 'process_id', 'data']), 
             ('on_complete_activity_task', ['task', 'result']), 
             ('on_activity_failed', ['reason', 'process_id', 'details', 'activity_execution']), 
             ('on_complete_decision_task', ['task', 'decisions']), 
@@ -53,11 +53,11 @@ class BlinkerBackendTestCase(WorkflowBackendTestCase):
             ('on_complete_activity_task', ['task', 'result']), 
             ('on_activity_completed', ['process_id', 'result', 'activity_execution']), 
             ('on_complete_decision_task', ['task', 'decisions']),
-            ('on_process_started', ['process']),
+            ('on_process_started', ['process', 'process_id']),
             ('on_complete_decision_task', ['task', 'decisions']),
-            ('on_process_completed', ['process', 'result']),
+            ('on_process_completed', ['process', 'process_id', 'result']),
             ('on_complete_decision_task', ['task', 'decisions']),
-            ('on_process_completed', ['process', 'result'])
+            ('on_process_completed', ['process', 'process_id', 'result'])
         ]
 
         for (i,ev) in enumerate(received[:22]):

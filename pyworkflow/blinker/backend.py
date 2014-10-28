@@ -58,20 +58,19 @@ class BlinkerBackend(Backend):
 
     def start_process(self, process):
         ret = self.parent.start_process(process)
-
-        BlinkerBackend.on_process_started.send(self, process=process)
+        BlinkerBackend.on_process_started.send(self, process=process, process_id=ret)
         return ret        
     
-    def signal_process(self, process, signal, data=None):
-        ret = self.parent.signal_process(process, signal, data=data)
+    def signal_process(self, process_id, signal, data=None):
+        ret = self.parent.signal_process(process_id, signal, data=data)
         
-        BlinkerBackend.on_process_signaled.send(self, process=process, signal=signal, data=data)
+        BlinkerBackend.on_process_signaled.send(self, process_id=process_id, signal=signal, data=data)
         return ret        
 
-    def cancel_process(self, process, details=None):
-        ret = self.parent.cancel_process(process, details=details)
+    def cancel_process(self, process_id, details=None):
+        ret = self.parent.cancel_process(process_id, details=details)
         
-        BlinkerBackend.on_process_canceled.send(self, process=process, details=details)
+        BlinkerBackend.on_process_canceled.send(self, process_id=process_id, details=details)
         return ret
 
     def decision_signal(self, decision):
@@ -107,10 +106,10 @@ class BlinkerBackend(Backend):
 
             args = {
                 'schedule_activity': lambda: {'process': task.process, 'activity_execution': ActivityExecution(decision.activity, decision.id, decision.input)},
-                'complete_process': lambda: {'process': task.process, 'result': decision.result},
-                'cancel_process': lambda: {'process': task.process, 'details': decision.details},
+                'complete_process': lambda: {'process': task.process, 'process_id': task.process.id, 'result': decision.result},
+                'cancel_process': lambda: {'process': task.process, 'process_id': task.process.id, 'details': decision.details},
                 'cancel_activity': lambda: {'process': task.process, 'activity_id': decision.id},
-                'start_child_process': lambda: {'process': decision.process}
+                'start_child_process': lambda: {'process': decision.process, 'process_id': decision.process.id}
             }
 
             signal.send(self, **args[decision.type]())
