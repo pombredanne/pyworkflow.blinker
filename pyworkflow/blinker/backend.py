@@ -92,7 +92,8 @@ class BlinkerBackend(Backend):
         mapping = {
             ActivityCompleted: BlinkerBackend.on_activity_completed,
             ActivityCanceled: BlinkerBackend.on_activity_canceled,
-            ActivityFailed: BlinkerBackend.on_activity_failed
+            ActivityFailed: BlinkerBackend.on_activity_failed,
+            ActivityTimedOut: BlinkerBackend.on_activity_timedout
         }
 
         return mapping[result.__class__]
@@ -126,7 +127,8 @@ class BlinkerBackend(Backend):
         args = {
             'completed': lambda: {'result': result.result},
             'canceled': lambda: {'details': result.details},
-            'failed': lambda: {'reason': result.reason, 'details': result.details}
+            'failed': lambda: {'reason': result.reason, 'details': result.details},
+            'timedout': lambda: {'details': result.details}
         }
 
         signal = self.activity_result_signal(result)
